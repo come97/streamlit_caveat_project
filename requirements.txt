@@ -3,3 +3,4 @@ pandas==2.2.3
 plotly==5.24.1
 google-cloud-bigquery==3.29.0
 numpy==2.2.2
+pandas_gbq
