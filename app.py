@@ -10,9 +10,9 @@ from functions.simplify_period import format_periods as format_periods
 import pandas as pd
 from datetime import datetime
 from config.fields_by_industry import FIELDS_BY_INDUSTRY
-# Titress
-st.title("Caveat Merchant Registration")
+from front.frontend import render_header, add_custom_css
 
+render_header()
 # Sélecteur d'industrie
 industries = {
     "Ecom 🛒": "ecom",
@@ -23,19 +23,18 @@ industries = {
     "Gaming 🎮": "gaming",
     "Travel ✈️": "travel"
 }
-
 selected_industry = st.selectbox(
     "Choisissez une industrie",
     options=list(industries.keys()),
     help="Sélectionnez l'industrie pour personnaliser la requête."
 )
-
 # Obtenir l'identifiant technique de l'industrie
 industry_id = industries[selected_industry]
 
 # Champs d'entrée
 merchant_name = st.text_input("Enter merchant name", placeholder="Exemple : zara")
 scope = st.text_input("Enter scope", placeholder="Exemple : fr")
+
 
 # Initialiser les variables à None ou à des valeurs par défaut
 st.session_state.setdefault("parser_results", None)
@@ -105,7 +104,6 @@ if st.button("Exécuter les requêtes"):
                 st.session_state["sanity_rate"] = 0.0
             else:
                 st.session_state["sanity_rate"] = sanity_results.iloc[0, 0] * 100
-
 
 
 # Affichage des graphiques et Caveats
@@ -204,7 +202,7 @@ if "order_foxid_results" in st.session_state and st.session_state["order_foxid_r
         st.metric(label="Sanity Rate", value=f"{st.session_state['sanity_rate']:.2f}%")
 
 # Création des Caveats
-st.markdown("### Caveats to Create")
+    st.markdown("### Caveats to Create")
 caveats = []
 
 failures_rate = st.session_state["failures_rate"]
