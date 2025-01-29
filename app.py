@@ -83,7 +83,6 @@ if st.button("Exécuter les requêtes"):
             else:
                 st.session_state["order_foxid_results"] = order_foxid_results
 
-            # Calcul des rates failures et sanity
             failures_query = get_failures_query(parser_list)
             failures_results = execute_query(failures_query)
 
@@ -117,7 +116,6 @@ if "industry_results" in st.session_state and st.session_state["industry_results
     fields = [col for col in industry_results.columns if col.startswith("completion")]
 
     full_period = pd.date_range(start="2022-01-01", end=datetime.today(), freq="MS")
-    # Fusionner avec les données existantes pour inclure tous les mois
     industry_results = (
         pd.DataFrame({"month": full_period})
         .merge(industry_results, on="month", how="left")
@@ -222,10 +220,8 @@ if "order_foxid_results" in st.session_state and st.session_state["order_foxid_r
 if "industry_results" in st.session_state and st.session_state["industry_results"] is not None:
     industry_results = st.session_state["industry_results"]
 
-    # Parcourir les champs avec priorités
     fields_with_priorities = FIELDS_BY_INDUSTRY[industry_id]
     for field, priority in fields_with_priorities.items():
-        # Ajouter le préfixe `completion_` pour vérifier les colonnes dans industry_results
         column_name = f"completion_{field}"
 
         # Récupération des périodes à 0% de completion
@@ -240,7 +236,6 @@ if "industry_results" in st.session_state and st.session_state["industry_results
                 st.write(f"Caveat added for P0 field '{column_name}':", formatted_periods)
         
         elif priority == "P1":
-            # Règle pour les P1 : Ignorer si entièrement absent
             all_zero = len(zero_completion) == len(industry_results)
             if not all_zero and not zero_completion.empty:
                 # S'il y a des périodes à 0%, mais pas entièrement absent
