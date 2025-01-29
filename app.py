@@ -28,15 +28,13 @@ selected_industry = st.selectbox(
     options=list(industries.keys()),
     help="Sélectionnez l'industrie pour personnaliser la requête."
 )
-# Obtenir l'identifiant technique de l'industrie
+
 industry_id = industries[selected_industry]
 
-# Champs d'entrée
+
 merchant_name = st.text_input("Enter merchant name", placeholder="Exemple : zara")
 scope = st.text_input("Enter scope", placeholder="Exemple : fr")
 
-
-# Initialiser les variables à None ou à des valeurs par défaut
 st.session_state.setdefault("parser_results", None)
 st.session_state.setdefault("industry_results", None)
 st.session_state.setdefault("order_foxid_results", None)
@@ -48,7 +46,6 @@ if st.button("Exécuter les requêtes"):
     if not merchant_name or not scope:
         st.warning("Veuillez entrer un nom de marchand et un scope.")
     else:
-        # Récupération des parser_name
         query_parser = get_parser_query(merchant_name, scope)
         parser_results = execute_query(query_parser)
 
@@ -65,10 +62,9 @@ if st.button("Exécuter les requêtes"):
             else:
                 fields_with_priorities = FIELDS_BY_INDUSTRY[industry_id]
                 fields = list(fields_with_priorities.keys())
-                # Générer la requête dynamique
+
                 query = generate_query(merchant_name, parser_list, fields)
 
-                # Exécuter la requête
                 industry_results = execute_query(query)
 
                 if industry_results.empty:
@@ -78,7 +74,6 @@ if st.button("Exécuter les requêtes"):
                     st.success(f"Résultats récupérés avec succès pour {selected_industry} !")
                     st.session_state["industry_results"] = industry_results
 
-            # Récupération des résultats pour order_foxid
             order_foxid_query = get_order_foxid_query(merchant_name, parser_list)
             order_foxid_results = execute_query(order_foxid_query)
 
@@ -112,7 +107,6 @@ if "industry_results" in st.session_state and st.session_state["industry_results
     
     fields_with_priorities = FIELDS_BY_INDUSTRY[industry_id]
 
-    # Renommer les colonnes pour inclure les priorités dans leurs noms
     renamed_columns = {
         f"completion_{field.replace('.', '_')}": f"completion_{field.replace('.', '_')} - {priority}"
         for field, priority in fields_with_priorities.items()
@@ -122,13 +116,12 @@ if "industry_results" in st.session_state and st.session_state["industry_results
 
     fields = [col for col in industry_results.columns if col.startswith("completion")]
 
-    # Générer la plage complète de mois entre janvier 2022 et aujourd'hui
     full_period = pd.date_range(start="2022-01-01", end=datetime.today(), freq="MS")
     # Fusionner avec les données existantes pour inclure tous les mois
     industry_results = (
         pd.DataFrame({"month": full_period})
         .merge(industry_results, on="month", how="left")
-        .fillna(0)  # Remplace les valeurs manquantes par 0 (ou utilisez `.fillna(None)` pour garder vide)
+        .fillna(0)  
     )
 
     selected_fields = st.multiselect(
