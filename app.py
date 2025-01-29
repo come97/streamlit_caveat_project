@@ -10,7 +10,7 @@ from functions.simplify_period import format_periods as format_periods
 import pandas as pd
 from datetime import datetime
 from config.fields_by_industry import FIELDS_BY_INDUSTRY
-from front.frontend import render_header, add_custom_css
+from front.frontend import render_header
 
 render_header()
 # Sélecteur d'industrie
